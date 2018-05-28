@@ -6,6 +6,9 @@ package nl.lucasouwens.loader;
  */
 public interface TerminalCommandExecutor {
 
+    /**
+     * Register your commands through this method
+     */
     public void register();
 
 }

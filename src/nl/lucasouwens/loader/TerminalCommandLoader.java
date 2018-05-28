@@ -13,6 +13,10 @@ public class TerminalCommandLoader {
 
     private static TerminalCommandLoader instance;
 
+    /**
+     * Get access to the singleton TerminalCommandLoader class
+     * @return TerminalCommandLoader
+     */
     public static TerminalCommandLoader getInstance() {
         if(instance == null) {
             instance = new TerminalCommandLoader();
@@ -21,6 +25,11 @@ public class TerminalCommandLoader {
         return instance;
     }
 
+    /**
+     * Load all the plugins in the modules folder which implement the TerminalCommandExecutor class
+     * @see TerminalCommandExecutor
+     * @return boolean
+     */
     public boolean load() {
         final File loadingDir = new File("modules/");
         if(!(loadingDir.isDirectory())) {
@@ -59,7 +68,13 @@ public class TerminalCommandLoader {
         return false;
     }
 
-    public Class getClass(String path, String name) {
+    /**
+     * Load an external class by using its path and classname (including the package)
+     * @param path String The absolute path to the jar file
+     * @param name String The package + name of the class
+     * @return Class
+     */
+    private Class getClass(String path, String name) {
         try {
             JarFile jarFile = new JarFile(path);
             Enumeration<JarEntry> e = jarFile.entries();
