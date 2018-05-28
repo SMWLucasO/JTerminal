@@ -1,5 +1,6 @@
 package nl.lucasouwens.command.parsing;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
@@ -12,6 +13,10 @@ public class CommandRegister {
         commandRegister = new HashMap<>();
     }
 
+    /**
+     * Get access to the singleton CommandRegister class
+     * @return CommandRegister
+     */
     public static CommandRegister getInstance() {
         if(instance == null) {
             instance = new CommandRegister();
@@ -19,21 +24,45 @@ public class CommandRegister {
         return instance;
     }
 
-    public void register(Command command, Method method) {
-        commandRegister.put(command, method);
+
+    /**
+     * Register all the commands which are contained within a specific class.
+     * Make sure that you are using the CommandType annotation to register these new commands.
+     * @see CommandType
+     * @param functionalityClass Class
+     */
+    public void register(Class functionalityClass) {
+        for (Method method : functionalityClass.getDeclaredMethods()) {
+            for (Annotation annotation : method.getDeclaredAnnotations()) {
+                if (annotation instanceof CommandType) {
+                    System.out.println("Registered command " + ((CommandType) annotation).name());
+                    getRegister().put(new Command(((CommandType) annotation).name(), ((CommandType) annotation).args(), ((CommandType) annotation).optional()), method);
+                }
+            }
+        }
     }
 
+    /**
+     * A store of all commands witin the terminal.
+     *
+     * @return HashMap
+     */
     public HashMap<Command, Method> getRegister() {
         return commandRegister;
     }
 
+    /**
+     * Find a specific command within the list.
+     * @param command String The command which you are looking for
+     * @return Command
+     * @see Command
+     */
     public static Command getCommandByName(String command) {
         for (Command c : CommandRegister.getInstance().getRegister().keySet()) {
             if(c.getCommand().equalsIgnoreCase(command)) {
                 return c;
             }
         }
-
         return null;
     }
 }

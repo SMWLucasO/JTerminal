@@ -9,6 +9,11 @@ public class Commands {
 
     private static Commands instance = null;
 
+    /**
+     * (Singleton)
+     * Easy access to the commands class so that we don't need to reconstruct it every time
+     * @return Commands
+     */
     public static Commands getInstance() {
         if(instance == null) {
             instance = new Commands();
@@ -16,6 +21,8 @@ public class Commands {
 
         return instance;
     }
+
+    // Below are the commands which i am registering.
 
     @CommandType(name = "fdelete", args = {"filename"})
     public void deleteFile(String fileName) {
