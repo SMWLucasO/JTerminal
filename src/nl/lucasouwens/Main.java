@@ -16,11 +16,13 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         CommandRegister.getInstance().register(Commands.class);
         TerminalCommandLoader.getInstance().load();
-        do {
-            if (sc.hasNext()) {
-                CommandParser.getInstance().execute(sc.nextLine());
+
+        String line;
+        while((line = sc.nextLine()) != null && !line.equalsIgnoreCase("q")) {
+            if(!(CommandParser.getInstance().execute(line))) {
+                System.out.println("[Lucas' Terminal] Failed to execute the specified command");
             }
-        } while (!(sc.nextLine().equalsIgnoreCase("q")));
+        }
     }
 
 }

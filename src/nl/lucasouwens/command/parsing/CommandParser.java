@@ -1,6 +1,7 @@
 package nl.lucasouwens.command.parsing;
 
 import nl.lucasouwens.command.Commands;
+import nl.lucasouwens.util.ArrayUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -67,7 +68,12 @@ public class CommandParser {
 
                         if (arguments.length >= commandToExecute.getMinCommandSize()) {
                             arguments = this.fillEmptyPieces(method, arguments);
-                            method.invoke(Commands.getInstance(), arguments);
+                            try {
+                                method.invoke(method.getDeclaringClass().newInstance(), arguments);
+                            } catch (InstantiationException e) {
+                                System.out.println("[Lucas' Terminal] Failed to execute the specified command");
+                            }
+
                             return true;
                         } else {
                             System.out.print(String.format("[Lucas' Terminal] The command %s requires atleast %d arguments.", commandToExecute.getCommand(), commandToExecute.getMinCommandSize()));
@@ -90,11 +96,11 @@ public class CommandParser {
      */
     private String[] fillEmptyPieces(Method method, String[] commandPieces) {
         if(commandPieces.length <= method.getParameterCount()) {
-            for(int i = commandPieces.length; i <= method.getParameterCount(); i++) {
-                commandPieces[i] = null;
+            int leftover = method.getParameterCount() - commandPieces.length;
+            if(leftover >= 1) {
+                commandPieces = ArrayUtil.join(commandPieces, new String[leftover]);
             }
         }
-
         return commandPieces;
     }
 
