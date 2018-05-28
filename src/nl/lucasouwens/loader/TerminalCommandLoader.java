@@ -51,7 +51,6 @@ public class TerminalCommandLoader {
                     if(split.length >= 1) {
                         if(split[0].equalsIgnoreCase("main")) {
                             Class<?> clazz = getClass(jar.getAbsolutePath(), split[1]);
-                            System.out.println(clazz);
                             if(clazz.newInstance() instanceof TerminalCommandExecutor) {
                                 System.out.println("[Lucas' Terminal] Registered the plugin " + clazz.getSimpleName());
                                 ((TerminalCommandExecutor)clazz.newInstance()).register();

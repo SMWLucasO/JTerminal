@@ -64,8 +64,8 @@ public class CommandParser {
                 Method method = CommandRegister.getInstance().getRegister().get(CommandRegister.getCommandByName(commandPieces[0]));
                 if (method != null) {
                     try {
+                        // TODO implement arguments within quotes
                         String[] arguments = Arrays.copyOfRange(commandPieces, 1, commandPieces.length - 1 <= method.getParameterCount() ? commandPieces.length : method.getParameterCount() + 1);
-
                         if (arguments.length >= commandToExecute.getMinCommandSize()) {
                             arguments = this.fillEmptyPieces(method, arguments);
                             try {
@@ -79,7 +79,8 @@ public class CommandParser {
                             System.out.print(String.format("[Lucas' Terminal] The command %s requires atleast %d arguments.", commandToExecute.getCommand(), commandToExecute.getMinCommandSize()));
                         }
                     } catch (SecurityException | IllegalAccessException | InvocationTargetException e) {
-                        System.out.println(e.getMessage());
+                        System.out.println("[Lucas' Terminal] An error has occurred.");
+                        e.printStackTrace();
                     }
                 }
             }
