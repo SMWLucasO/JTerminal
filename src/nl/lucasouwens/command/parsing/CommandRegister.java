@@ -35,7 +35,7 @@ public class CommandRegister {
         for (Method method : functionalityClass.getDeclaredMethods()) {
             for (Annotation annotation : method.getDeclaredAnnotations()) {
                 if (annotation instanceof CommandType) {
-                    System.out.println("[Lucas' Terminal] Registered command " + ((CommandType) annotation).name() + " from " + functionalityClass.getSimpleName());
+                    System.out.println(String.format("[Lucas' Terminal] Registered command %s from %s", ((CommandType) annotation).name(), functionalityClass.getSimpleName()));
                     getRegister().put(new Command(((CommandType) annotation).name(), ((CommandType) annotation).args(), ((CommandType) annotation).optional()), method);
                 }
             }

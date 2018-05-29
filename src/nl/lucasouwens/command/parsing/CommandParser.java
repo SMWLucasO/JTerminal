@@ -6,7 +6,9 @@ import nl.lucasouwens.util.ArrayUtil;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 public class CommandParser {
 
@@ -64,13 +66,20 @@ public class CommandParser {
                 Method method = CommandRegister.getInstance().getRegister().get(CommandRegister.getCommandByName(commandPieces[0]));
                 if (method != null) {
                     try {
-                        // TODO implement arguments within quotes
                         String[] arguments = Arrays.copyOfRange(commandPieces, 1, commandPieces.length - 1 <= method.getParameterCount() ? commandPieces.length : method.getParameterCount() + 1);
                         if (arguments.length >= commandToExecute.getMinCommandSize()) {
-                            arguments = this.fillEmptyPieces(method, arguments);
+                            arguments = this.enquotedToSingle(commandPieces);
+//                            arguments = this.fillEmptyPieces(method, arguments);
+                            Arrays.stream(arguments).forEach(System.out::println);
+                            System.out.println(method.getParameterCount() + " vs " + arguments.length);
                             try {
-                                method.invoke(method.getDeclaringClass().newInstance(), arguments);
+                                if(arguments.length > method.getParameterCount()) {
+                                    System.out.println("[Lucas' Terminal] Unable to execute command, too many arguments");
+                                } else {
+                                    method.invoke(method.getDeclaringClass().newInstance(), arguments);
+                                }
                             } catch (InstantiationException e) {
+
                                 System.out.println("[Lucas' Terminal] Failed to execute the specified command");
                             }
 
@@ -96,13 +105,31 @@ public class CommandParser {
      * @return commandPieces
      */
     private String[] fillEmptyPieces(Method method, String[] commandPieces) {
-        if(commandPieces.length <= method.getParameterCount()) {
+        if(commandPieces.length < method.getParameterCount()) {
             int leftover = method.getParameterCount() - commandPieces.length;
             if(leftover >= 1) {
                 commandPieces = ArrayUtil.join(commandPieces, new String[leftover]);
             }
         }
         return commandPieces;
+    }
+
+    /**
+     * Method to parse the command line arguments given correctly, useful for passing strings of text.
+     * @param commandPieces String Arguments of the command
+     * @return String[]
+     */
+    private String[] enquotedToSingle(String[] commandPieces) {
+        String arguments = String.join(" ", Arrays.copyOfRange(commandPieces, 1, commandPieces.length));
+        ArrayList<String> rebuiltArgumentArray = new ArrayList<>();
+        for(String str : arguments.split("\"")) {
+            rebuiltArgumentArray.add(str);
+            arguments = arguments.replace(str, " ");
+
+        }
+        // TODO do a good fix instead of this filthy way of cleaning
+        rebuiltArgumentArray.removeAll(Arrays.asList("", " ", null));
+        return rebuiltArgumentArray.stream().toArray(String[]::new);
     }
 
 }

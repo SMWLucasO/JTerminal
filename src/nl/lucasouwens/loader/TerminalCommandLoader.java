@@ -1,7 +1,5 @@
 package nl.lucasouwens.loader;
 
-import nl.lucasouwens.command.parsing.CommandType;
-
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -52,7 +50,7 @@ public class TerminalCommandLoader {
                         if(split[0].equalsIgnoreCase("main")) {
                             Class<?> clazz = getClass(jar.getAbsolutePath(), split[1]);
                             if(clazz.newInstance() instanceof TerminalCommandExecutor) {
-                                System.out.println("[Lucas' Terminal] Registered the plugin " + clazz.getSimpleName());
+                                System.out.println(String.format("[Lucas' Terminal] Registered the plugin ", clazz.getSimpleName()));
                                 ((TerminalCommandExecutor)clazz.newInstance()).register();
                             }
                         }
@@ -96,7 +94,7 @@ public class TerminalCommandLoader {
                 }
             }
         } catch(IOException | ClassNotFoundException e) {
-            System.out.println("[Lucas' Terminal] Failed to find plugin for " + name.split(".")[name.split(".").length -1]);
+            System.out.println(String.format("[Lucas' Terminal] Failed to find plugin for %s", name.split(".")[name.split(".").length -1]));
         }
 
         return null;
