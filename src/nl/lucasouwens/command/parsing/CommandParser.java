@@ -1,6 +1,5 @@
 package nl.lucasouwens.command.parsing;
 
-import nl.lucasouwens.command.Commands;
 import nl.lucasouwens.util.ArrayUtil;
 
 import java.lang.annotation.Annotation;
@@ -8,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 public class CommandParser {
 
@@ -69,9 +67,8 @@ public class CommandParser {
                         String[] arguments = Arrays.copyOfRange(commandPieces, 1, commandPieces.length - 1 <= method.getParameterCount() ? commandPieces.length : method.getParameterCount() + 1);
                         if (arguments.length >= commandToExecute.getMinCommandSize()) {
                             arguments = this.enquotedToSingle(commandPieces);
-//                            arguments = this.fillEmptyPieces(method, arguments);
+                            arguments = this.fillEmptyPieces(method, arguments);
                             Arrays.stream(arguments).forEach(System.out::println);
-                            System.out.println(method.getParameterCount() + " vs " + arguments.length);
                             try {
                                 if(arguments.length > method.getParameterCount()) {
                                     System.out.println("[Lucas' Terminal] Unable to execute command, too many arguments");
@@ -127,7 +124,7 @@ public class CommandParser {
             arguments = arguments.replace(str, " ");
 
         }
-        // TODO do a good fix instead of this filthy way of cleaning
+
         rebuiltArgumentArray.removeAll(Arrays.asList("", " ", null));
         return rebuiltArgumentArray.stream().toArray(String[]::new);
     }
