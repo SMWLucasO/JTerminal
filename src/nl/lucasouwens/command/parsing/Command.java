@@ -3,7 +3,7 @@ package nl.lucasouwens.command.parsing;
 public class Command {
 
     private String command;
-    private String[] requiredArguments = {}, optionalArguments = {};
+    private String[] requiredArguments, optionalArguments;
 
     /**
      * The constructor for the command.

@@ -4,6 +4,8 @@ import nl.lucasouwens.command.parsing.CommandParser;
 import nl.lucasouwens.command.parsing.CommandRegister;
 import nl.lucasouwens.command.Commands;
 import nl.lucasouwens.loader.TerminalCommandLoader;
+import nl.lucasouwens.logger.Logger;
+import nl.lucasouwens.logger.MessageType;
 
 import java.util.Scanner;
 
@@ -20,7 +22,7 @@ public class Main {
         String line;
         while((line = sc.nextLine()) != null && !line.equalsIgnoreCase("q")) {
             if(!(CommandParser.getInstance().execute(line))) {
-                System.out.println("[Lucas' Terminal] Failed to execute the specified command");
+                Logger.log("Failed to execute the specified command", MessageType.ERROR);
             }
         }
     }

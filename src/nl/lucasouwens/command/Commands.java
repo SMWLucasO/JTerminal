@@ -1,6 +1,8 @@
 package nl.lucasouwens.command;
 
 import nl.lucasouwens.command.parsing.CommandType;
+import nl.lucasouwens.logger.Logger;
+import nl.lucasouwens.logger.MessageType;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,17 +25,17 @@ public class Commands {
         return instance;
     }
 
-    // Below are the commands which i am registering.
+    // Below are the commands which I am registering.
 
     @CommandType(name = "fdelete", args = {"filename"})
     public void deleteFile(String fileName) {
         File toDelete = new File(fileName);
         if(!(toDelete.exists())) {
-            System.out.println("[Lucas' Terminal] We cannot delete this file.");
+            Logger.log("We cannot delete this file.");
         } else if(toDelete.delete()) {
-            System.out.println(String.format("[Lucas' Terminal] The file %s has been deleted", fileName));
+            Logger.log(String.format("The file %s has been deleted", fileName));
         } else {
-            System.out.println("[Lucas' Terminal] We are cannot delete this file.");
+            Logger.log("We are unable to delete this file");
         }
     }
 
@@ -41,21 +43,21 @@ public class Commands {
     public void createFile(String fileName, String contents) {
         File toCreate = new File(fileName);
         if(toCreate.isDirectory() || toCreate.exists()) {
-            System.out.println("[Lucas' Terminal] We cannot create this file.");
+            Logger.log("We cannot create this file.");
             return;
         }
 
         File _temp = new File(toCreate.getAbsolutePath().replace(toCreate.getName(), ""));
         if(!_temp.exists()) {
             if(!_temp.mkdirs()) {
-                System.out.println("[Lucas' Terminal] The creation of the directory has failed.");
+                Logger.log("The creation of the directory has failed.");
                 return;
             }
         }
 
         try {
             if (!(toCreate.createNewFile())) {
-                System.out.println("[Lucas' Terminal] The creation of the file has failed.");
+                Logger.log("The creation of the file has failed");
             }
 
             if(contents != null) {
@@ -64,10 +66,9 @@ public class Commands {
                 }
             }
 
-            System.out.println("[Lucas' Terminal] The file was created.");
+            Logger.log("The file has been created.");
         } catch(IOException e) {
-            System.out.println("[Lucas' Terminal] An error has occurred.");
-            e.printStackTrace();
+            Logger.log("An error has occurred, (fcreate command failed due to an IOException.)", MessageType.ERROR);
         }
 
     }

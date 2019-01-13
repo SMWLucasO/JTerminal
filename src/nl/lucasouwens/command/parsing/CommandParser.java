@@ -1,5 +1,7 @@
 package nl.lucasouwens.command.parsing;
 
+import nl.lucasouwens.logger.Logger;
+import nl.lucasouwens.logger.MessageType;
 import nl.lucasouwens.util.ArrayUtil;
 
 import java.lang.annotation.Annotation;
@@ -68,24 +70,23 @@ public class CommandParser {
                         if (arguments.length >= commandToExecute.getMinCommandSize()) {
                             arguments = this.enquotedToSingle(commandPieces);
                             arguments = this.fillEmptyPieces(method, arguments);
-                            Arrays.stream(arguments).forEach(System.out::println);
                             try {
                                 if(arguments.length > method.getParameterCount()) {
-                                    System.out.println("[Lucas' Terminal] Unable to execute command, too many arguments");
+                                    Logger.log("Unable to execute command, too many arguments", MessageType.ERROR);
                                 } else {
                                     method.invoke(method.getDeclaringClass().newInstance(), arguments);
                                 }
                             } catch (InstantiationException e) {
-
-                                System.out.println("[Lucas' Terminal] Failed to execute the specified command");
+                                Logger.log("Failed to execute the specified command", MessageType.ERROR);
                             }
 
                             return true;
                         } else {
-                            System.out.print(String.format("[Lucas' Terminal] The command %s requires atleast %d arguments.", commandToExecute.getCommand(), commandToExecute.getMinCommandSize()));
+                            Logger.log(String.format("The command %s requires at least %d arguments.",
+                                    commandToExecute.getCommand(), commandToExecute.getMinCommandSize()), MessageType.ERROR);
                         }
                     } catch (SecurityException | IllegalAccessException | InvocationTargetException e) {
-                        System.out.println("[Lucas' Terminal] An error has occurred.");
+                        Logger.log("An error has occurred.", MessageType.ERROR);
                         e.printStackTrace();
                     }
                 }

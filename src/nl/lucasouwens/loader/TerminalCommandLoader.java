@@ -1,5 +1,9 @@
 package nl.lucasouwens.loader;
 
+import nl.lucasouwens.constant.TerminalConstants;
+import nl.lucasouwens.logger.Logger;
+import nl.lucasouwens.logger.MessageType;
+
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -26,20 +30,19 @@ public class TerminalCommandLoader {
     /**
      * Load all the plugins in the modules folder which implement the TerminalCommandExecutor class
      * @see TerminalCommandExecutor
-     * @return boolean
      */
-    public boolean load() {
-        final File loadingDir = new File("modules/");
+    public void load() {
+        final File loadingDir = new File(TerminalConstants.MODULE_FOLDER);
         if(!(loadingDir.isDirectory())) {
             if(!(loadingDir.mkdirs())) {
-                System.out.println("[Lucas' Terminal] Failed to generate module folder");
+                Logger.log("Failed to generate module folder", MessageType.ERROR);
             }
         }
-        System.out.println("[Lucas' Terminal] Loading modules...");
+        Logger.log("Loading modules...", MessageType.INFO);
         for(File jar : loadingDir.listFiles()) {
             try {
                 JarFile jJar = new JarFile(jar);
-                JarEntry entry = jJar.getJarEntry("module.properties");
+                JarEntry entry = jJar.getJarEntry(TerminalConstants.MODULE_PROPERTY_LOCATION);
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(jJar.getInputStream(entry)));
 
@@ -50,7 +53,7 @@ public class TerminalCommandLoader {
                         if(split[0].equalsIgnoreCase("main")) {
                             Class<?> clazz = getClass(jar.getAbsolutePath(), split[1]);
                             if(clazz.newInstance() instanceof TerminalCommandExecutor) {
-                                System.out.println(String.format("[Lucas' Terminal] Registered the plugin ", clazz.getSimpleName()));
+                                Logger.log(String.format("Registered the plugin ", clazz.getSimpleName()), MessageType.INFO);
                                 ((TerminalCommandExecutor)clazz.newInstance()).register();
                             }
                         }
@@ -58,12 +61,10 @@ public class TerminalCommandLoader {
                 }
 
             } catch (IOException | InstantiationException | IllegalAccessException e) {
-                System.out.println("[Lucas' Terminal] Unable to initialize external modules.");
+                Logger.log("Unable to initialize external modules.", MessageType.ERROR);
             }
         }
-        System.out.println("[Lucas' Terminal] Modules loaded.");
-
-        return false;
+        Logger.log("Modules loaded", MessageType.INFO);
     }
 
     /**
@@ -94,7 +95,7 @@ public class TerminalCommandLoader {
                 }
             }
         } catch(IOException | ClassNotFoundException e) {
-            System.out.println(String.format("[Lucas' Terminal] Failed to find plugin for %s", name.split(".")[name.split(".").length -1]));
+            Logger.log(String.format("Failed to find plugin for %s", name.split(".")[name.split(".").length -1]), MessageType.ERROR);
         }
 
         return null;

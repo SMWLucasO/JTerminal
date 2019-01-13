@@ -1,5 +1,8 @@
 package nl.lucasouwens.command.parsing;
 
+import nl.lucasouwens.logger.Logger;
+import nl.lucasouwens.logger.MessageType;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -7,7 +10,7 @@ import java.util.HashMap;
 public class CommandRegister {
 
     private static CommandRegister instance = null;
-    private HashMap<Command, Method> commandRegister = null;
+    private HashMap<Command, Method> commandRegister;
 
     private CommandRegister() {
         commandRegister = new HashMap<>();
@@ -35,7 +38,7 @@ public class CommandRegister {
         for (Method method : functionalityClass.getDeclaredMethods()) {
             for (Annotation annotation : method.getDeclaredAnnotations()) {
                 if (annotation instanceof CommandType) {
-                    System.out.println(String.format("[Lucas' Terminal] Registered command %s from %s", ((CommandType) annotation).name(), functionalityClass.getSimpleName()));
+                    Logger.log(String.format("Registered command %s from %s", ((CommandType) annotation).name(), functionalityClass.getSimpleName()), MessageType.INFO);
                     getRegister().put(new Command(((CommandType) annotation).name(), ((CommandType) annotation).args(), ((CommandType) annotation).optional()), method);
                 }
             }
